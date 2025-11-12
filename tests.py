@@ -1,23 +1,12 @@
-from functions.get_files_info import get_files_info
+from functions.write_file import write_file
 
 
 def test():
-    result = get_files_info("calculator", ".")
-    print("Result for current directory:")
-    print(result)
-    print("")
+    print(write_file("calculator", "lorem.txt", "wait, this isn't lorem ipsum"))
 
-    result = get_files_info("calculator", "pkg")
-    print("Result for 'pkg' directory:")
-    print(result)
+    print(write_file("calculator", "pkg/morelorem.txt", "lorem ipsum dolor sit amet"))
 
-    result = get_files_info("calculator", "/bin")
-    print("Result for '/bin' directory:")
-    print(result)
-
-    result = get_files_info("calculator", "../")
-    print("Result for '../' directory:")
-    print(result)
+    print(write_file("calculator", "/tmp/temp.txt", "this should not be allowed"))
 
 
 if __name__ == "__main__":
