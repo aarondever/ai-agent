@@ -1,6 +1,27 @@
 import os
 import subprocess
 
+from google.genai import types
+
+schema_run_python_file = types.FunctionDeclaration(
+    name="run_python_file",
+    description="Execute python file with extra optional arguments, return stdout and stderr, constrained to the working directory.",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "file_path": types.Schema(
+                type=types.Type.STRING,
+                description="The python file.",
+            ),
+            "args": types.Schema(
+                type=types.Type.ARRAY,
+                items=types.Schema(type=types.Type.STRING),
+                description="The extra arguments for the python command. Optional.",
+            ),
+        },
+    ),
+)
+
 
 def run_python_file(working_directory: str, file_path: str, args: list[str] = []):
     file_abs_path = os.path.abspath(os.path.join(working_directory, file_path))
