@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
+from functions.call_function import call_function
 from functions.get_file_content import schema_get_file_content
 from functions.get_files_info import schema_get_files_info
 from functions.run_python_file import schema_run_python_file
@@ -46,14 +47,17 @@ response = client.models.generate_content(
 
 match sys.argv[2:]:
     case ["--verbose"]:
-        print(f"User prompt: {response.text}")
-        print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
-        print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
+        if response.function_calls:
+            for function_call_part in response.function_calls:
+                function_call_result = call_function(function_call_part, verbose=True)
+                print(f"-> {function_call_result.parts[0].function_response.response}")
+        else:
+            print(f"User prompt: {response.text}")
+            print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
+            print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
     case _:
         if response.function_calls:
             for function_call_part in response.function_calls:
-                print(
-                    f"Calling function: {function_call_part.name}({function_call_part.args})"
-                )
+                call_function(function_call_part)
         else:
             print(response.text)
